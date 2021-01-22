@@ -19,7 +19,6 @@ router.get('/users/:userid', (req, res) => {
     });
 });
 
-
 router.delete('/:userid', (req, res) => {
     let id = req.params.userid;
     let sql = 'delete from user where iduser = ?';
