@@ -3,7 +3,8 @@ const router = express.Router();
 const pool = require('../../dbconn');
 const mysql = require('mysql');
 const bcrypt = require('bcryptjs');
-
+const checkAuth = require('../routes/checkAut');
+const jwt = require('jsonwebtoken');
 
 router.get('/',(req,res)=>{
     res.status(200).json({
@@ -32,20 +33,21 @@ router.post('/register', async (req, res) => {
     });
 });
 
-router.post('/loginUser',  (req, res) => {
+router.post('/loginUser', (req, res) => {
     let data = req.body;
     let sql = 'select * from user where email = ?';
     sql = mysql.format(sql, [data.email]);
     pool.query(sql,  async function (error, results, fields) {
         if (error) throw error;
-        //res.status(201).json(results[0].password);
-
         const validpass = await bcrypt.compare(data.password,results[0].password);
-        //while(validpass == {}){}
-        //res.status(201).json(validpass);
-
         if(validpass){
-            return res.status(201).json(results[0]);
+            const token = jwt.sign(
+                {
+                    id: results[0].id
+                },
+                "secret",
+            );
+            return res.status(201).json(token);
         }
     });
 });

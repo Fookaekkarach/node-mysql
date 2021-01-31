@@ -3,8 +3,9 @@ const router = express.Router();
 const pool = require('../../dbconn');
 const mysql = require('mysql');
 const mergeJSON = require('merge-json');
+const checkAuth = require('../routes/checkAut');
 
-router.get('/users', (req, res) => {
+router.get('/users',checkAuth, (req, res) => {
     pool.query('SELECT * from user', function (error, results, fields) {
         if (error) throw error;
         res.status(200).json(results);
