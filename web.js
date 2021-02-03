@@ -3,11 +3,12 @@ const web = express();
 const indexRouter = require('./api/routes/index');
 const userRouter = require('./api/routes/user');
 const loginRouter = require('./api/routes/login');
+const uploadRouter = require('./api/routes/upload');
 const bodyparser = require('body-parser');
 
 
 web.use(bodyparser.json());
-
+web.use('/image',express.static(__dirname + '/image'));
 web.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
@@ -18,5 +19,6 @@ web.use(function(req, res, next) {
 web.use('/',indexRouter);
 web.use('/user',userRouter);
 web.use('/login',loginRouter);
+web.use('/upload',uploadRouter);
 
 module.exports = web;
