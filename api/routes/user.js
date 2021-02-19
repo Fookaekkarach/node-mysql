@@ -22,7 +22,7 @@ router.get('/users/:userid', (req, res) => {
 
 router.delete('/:userid', (req, res) => {
     let id = req.params.userid;
-    let sql = 'delete from user where iduser = ?';
+    let sql = 'delete from user where id = ?';
     sql = mysql.format(sql, [id]);
 
     pool.query(sql, function (error, results, fields) {
@@ -44,7 +44,7 @@ router.put('/:userid', (req, res) => {
     let data = req.body;
 
     //Old data
-    let oldSql = 'select * from user where iduser=?';
+    let oldSql = 'select * from user where id=?';
     oldSql = mysql.format(oldSql, [id]);
     let jsonoldData = {};
     pool.query(oldSql, (error, results, fields) => {
@@ -55,8 +55,8 @@ router.put('/:userid', (req, res) => {
         let newData = mergeJSON.merge(jsonoldData, data);
 
         //seve update
-        let sql = 'update user set fname = ?,lname = ?,email = ? where iduser = ?';
-        sql = mysql.format(sql, [newData.fname, newData.lname, newData.email, id]);
+        let sql = 'update user set name = ?,email = ?,gender = ?,caption = ? where id = ?';
+        sql = mysql.format(sql, [newData.name, newData.email, newData.gender, newData.caption, id]);
 
         pool.query(sql, function (error, results, fields) {
             if (error) throw error;

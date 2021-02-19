@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../../dbconn'); 
+const pool = require('../../dbconn');
 const mysql = require('mysql');
 
 const multer  = require('multer');
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'image/')
+        cb(null, 'image_post/')
     },
     filename: function (req, file, cb) {
         cb(null, new Date().toISOString().replace(/:|./g,'')+ file.originalname);
@@ -14,33 +14,33 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage: storage })
 
-router.post('/profile', upload.single('avatar'), function (req, res, next) {
-    let id = req.body.id;
+router.post('/createpost',upload.single('avatar'), async (req, res) => {
+    let data = req.body;
+
     let path = "http://memthainode.comsciproject.com/"+req.file.path;
     path = path.replace("\\","/");
-    let sql = 'update user set image = ? where id = ?';
-    sql = mysql.format(sql, [path,id]);
+
+    let sql = 'INSERT INTO post (IDuser_post , caption, image, date)' +
+        'VALUES (?,?,?,NOW())';
+    sql = mysql.format(sql, [data.IDuser_post, data.caption, path, data.date])
 
     pool.query(sql, function (error, results, fields) {
         if (error) throw error;
-        if (results.affectedRows == 1) { 
+        if (results.affectedRows == 1) {
             res.status(201).json({
-                message: "Upload success",
+                message: "post success",
             });
         } else {
             res.status(400).json({
-                message: "Upload Failed",
+                message: "post Failed",
             });
         }
     });
 });
 
-
-
-router.get('/test', (req, res) => {
-    pool.query('SELECT * from user', function (error, results, fields) {
-        if (error) throw error;
-        res.status(200).json(results);
+router.get('/',(req,res)=>{
+    res.status(200).json({
+        message : 'Post route TEST okkkk'
     });
 });
 
