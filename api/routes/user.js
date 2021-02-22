@@ -12,7 +12,7 @@ router.get('/users',checkAuth, (req, res) => {
     });
 });
 
-router.get('/users/:userid', (req, res) => {
+router.get('/users/:userid',checkAuth,(req, res) => {
     let id = req.params.userid;
     pool.query('SELECT * from user where id = ' + id, function (error, results, fields) {
         if (error) throw error;
