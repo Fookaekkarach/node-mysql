@@ -39,8 +39,8 @@ router.post('/createpost',upload.single('avatar'), async (req, res) => {
     });
 });
 
-router.delete('/delete/:postid',checkAuth, (req, res) => {
-    let id = req.params.postid;
+router.post('/delete',checkAuth, (req, res) => {
+    let id = req.body.idpost;
     let sql = 'delete from post where idpost = ?';
     sql = mysql.format(sql, [id]);
 
@@ -65,6 +65,27 @@ router.get('/selectPostId/:postid',checkAuth,(req, res) => {
         res.status(200).json(results);
     });
 });
+
+router.post('/editcaption', function (req, res, next) {
+    let idpost = req.body.id;
+    let captionnew = req.body.caption;
+    let sql = 'update post set caption = ? where idpost = ?';
+    sql = mysql.format(sql, [captionnew,idpost]);
+
+    pool.query(sql, function (error, results, fields) {
+        if (error) throw error;
+        if (results.affectedRows == 1) { 
+            res.status(201).json({
+                message: "edit success",
+            });
+        } else {
+            res.status(400).json({
+                message: "edit Failed",
+            });
+        }
+    });
+});
+
 
 router.get('/',(req,res)=>{
     res.status(200).json({
