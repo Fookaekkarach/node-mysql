@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../../dbconn');
 const mysql = require('mysql');
+const checkAuth = require('../routes/checkAut');
 
 const multer  = require('multer');
 const storage = multer.diskStorage({
@@ -35,6 +36,33 @@ router.post('/createpost',upload.single('avatar'), async (req, res) => {
                 message: "post Failed",
             });
         }
+    });
+});
+
+router.delete('/delete/:postid',checkAuth, (req, res) => {
+    let id = req.params.postid;
+    let sql = 'delete from post where idpost = ?';
+    sql = mysql.format(sql, [id]);
+
+    pool.query(sql, function (error, results, fields) {
+        if (error) throw error;
+        if (results.affectedRows == 1) {
+            res.status(201).json({
+                message: "Delete success",
+            });
+        } else {
+            res.status(400).json({
+                message: "Delete Failed",
+            });
+        }
+    });
+});
+
+router.get('/selectPostId/:postid',checkAuth,(req, res) => {
+    let id = req.params.postid;
+    pool.query('SELECT * from post where IDuser_post = ' + id +' ORDER BY date DESC', function (error, results, fields) {
+        if (error) throw error;
+        res.status(200).json(results);
     });
 });
 
