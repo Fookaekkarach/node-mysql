@@ -12,25 +12,42 @@ router.get('/',(req,res)=>{
     });
 });
 
-router.post('/register', async (req, res) => {
+router.post('/register',  (req, res) => {
     let data = req.body;
-    const haspass = await bcrypt.hash(data.password,10);
-    let sql = 'INSERT INTO user (name, email, password, status, date)' +
-        'VALUES (?,?,?,?,NOW())';
-    sql = mysql.format(sql, [data.name, data.email, haspass, data.status, data.date])
+    let sql = 'SELECT COUNT(`email`) as checkmail  FROM `user` WHERE `email`= ?';
+    sql = mysql.format(sql, [data.email]);
 
-    pool.query(sql, function (error, results, fields) {
+    pool.query(sql,async function (error, results, fields) {
         if (error) throw error;
-        if (results.affectedRows == 1) {
-            res.status(201).json({
-                message: "register success",
-            });
+        if (results[0].checkmail == 0) {
+            
+            const haspass = await bcrypt.hash(data.password,10);
+            let sql = 'INSERT INTO user (name, email, password, status, date)' +
+                'VALUES (?,?,?,?,NOW())';
+            sql = mysql.format(sql, [data.name, data.email, haspass, data.status, data.date]);
+
+            pool.query(sql, function (error, results, fields) {
+                if (error) throw error;
+                if (results.affectedRows == 1) {
+                    res.status(201).json({
+                        message: "register success",
+                    });
+                } else {
+                    res.status(400).json({
+                        message: "register Failed",
+                    });
+                }
+    });
+               
         } else {
             res.status(400).json({
                 message: "register Failed",
             });
         }
     });
+
+
+  
 });
 
 router.post('/loginUser', (req, res) => {
