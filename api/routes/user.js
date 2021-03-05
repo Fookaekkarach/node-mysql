@@ -79,6 +79,7 @@ router.get('/search/:nameuser',checkAuth,(req, res) => {
     pool.query("select id,name,email from user where `name` like concat(?,'%')",[name], function (error, results, fields) {
         if (error) throw error;
         res.status(200).json(results);
+        
     });
 });
 module.exports = router;
