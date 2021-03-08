@@ -5,6 +5,7 @@ const userRouter = require('./api/routes/user');
 const loginRouter = require('./api/routes/login');
 const uploadRouter = require('./api/routes/upload');
 const postRouter = require('./api/routes/post');
+const followRouter = require('./api/routes/follow');
 const bodyparser = require('body-parser');
 
 
@@ -23,5 +24,6 @@ web.use('/user',userRouter);
 web.use('/login',loginRouter);
 web.use('/upload',uploadRouter);
 web.use('/post',postRouter);
+web.use('/follow',followRouter);
 
 module.exports = web;
