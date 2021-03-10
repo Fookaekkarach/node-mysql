@@ -10,11 +10,11 @@ router.get('/test',(req,res)=>{
     });
 });
 
-router.post('/', (req, res) => {
+router.post('/follow', (req, res) => {
     let data = req.body;
     let sql = 'INSERT INTO follow (date,IDmy,IDfollowing)' +
     'VALUES (NOW(),?,?)';
-    sql = mysql.format(sql, [data.date,data.IDmy,data.IDfollowing]);
+    sql = mysql.format(sql, [data.IDmy,data.IDfollowing]);
 
     pool.query(sql,function (error, results, fields) {
         if (error) throw error;
@@ -26,10 +26,27 @@ router.post('/', (req, res) => {
             res.status(400).json({
                 message: "follow Failed",
             });
-        }
-            
+        }     
     });
+});
 
+router.post('/unfollow', (req, res) => {
+    let data = req.body;
+    let sql = 'DELETE FROM `follow` WHERE `IDmy` = ? AND `IDfollowing` = ?';
+    sql = mysql.format(sql, [data.IDmy,data.IDfollowing]);
+
+    pool.query(sql,function (error, results, fields) {
+        if (error) throw error;
+        if (results.affectedRows == 1) {
+            res.status(201).json({
+                message: "delete success",
+            });
+        } else {
+            res.status(400).json({
+                message: "delete Failed",
+            });
+        }     
+    });
 });
 
 
