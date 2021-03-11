@@ -41,7 +41,7 @@ router.post('/register',  (req, res) => {
                
         } else {
             res.status(400).json({
-                message: "register Failed",
+                message: "อีเมลซ้ำกัน",
             });
         }
     });
@@ -62,6 +62,10 @@ router.post('/loginUser', (req, res) => {
                 "secret",
             );
             return res.status(201).json(token);
+        }else {
+            res.status(400).json({
+                message: "login Failed",
+            });
         }
     });
 });
