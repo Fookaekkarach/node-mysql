@@ -49,5 +49,16 @@ router.post('/unfollow', (req, res) => {
     });
 });
 
+router.post('/checkfollow', (req, res) => {
+    let data = req.body;
+    let sql = 'SELECT COUNT(*) as checkmail FROM `follow` WHERE `IDmy`=? AND`IDfollowing`=?';
+    sql = mysql.format(sql, [data.IDmy,data.IDfollowing]);
+
+    pool.query(sql,function (error, results, fields) {
+        if (error) throw error;
+        res.status(201).json(results[0].checkmail);
+    });
+});
+
 
 module.exports = router;

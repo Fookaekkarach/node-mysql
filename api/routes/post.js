@@ -66,6 +66,46 @@ router.get('/selectPostId/:postid',checkAuth,(req, res) => {
     });
 });
 
+
+
+router.get('/selectPostversion2/:postid',checkAuth,(req, res) => {
+    let id = req.params.postid;
+    let sql = 'SELECT `IDfollowing` FROM `follow` WHERE `IDmy`=?';
+    sql = mysql.format(sql, [id]);
+    pool.query(sql,function (error, results, fields) {
+        if (error) throw error;
+        let arr = new Array();
+        arr.push(id);
+        results.forEach(element => {
+            arr.push(element.IDfollowing);
+        });
+            let arrnew = new Array();
+            arr.forEach(element =>{
+                let sql2 = 'SELECT user.id , user.name , user.image as userimage , post.idpost , post.image ,post.caption , post.date FROM user,post WHERE user.id = post.IDuser_post AND post.IDuser_post = ? ORDER BY date DESC ';
+                sql2 = mysql.format(sql2, [element]);
+                pool.query(sql2,function (error, results, fields) {
+                
+                    if(results!=""){
+                        results.forEach(element2 => {
+                            arrnew.push(element2);
+                        });
+                    }
+
+                    if(element == arr[arr.length-1]){
+                        arrnew.sort(function (a,b) {
+                            return new Date(b.date)-new Date(a.date)
+
+                        });
+                        res.status(200).json(arrnew);
+                    }
+                });
+            });
+    });
+});
+
+
+
+
 router.post('/editcaption', function (req, res, next) {
     let idpost = req.body.id;
     let captionnew = req.body.caption;
