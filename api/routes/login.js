@@ -14,6 +14,9 @@ router.get('/',(req,res)=>{
 
 router.post('/register',  (req, res) => {
     let data = req.body;
+
+    let img = "http://memthainode.comsciproject.com/image/testprofile.png";
+    
     let sql = 'SELECT COUNT(`email`) as checkmail  FROM `user` WHERE `email`= ?';
     sql = mysql.format(sql, [data.email]);
 
@@ -22,9 +25,9 @@ router.post('/register',  (req, res) => {
         if (results[0].checkmail == 0) {
             
             const haspass = await bcrypt.hash(data.password,10);
-            let sql = 'INSERT INTO user (name, email, password, status, date)' +
-                'VALUES (?,?,?,?,NOW())';
-            sql = mysql.format(sql, [data.name, data.email, haspass, data.status, data.date]);
+            let sql = 'INSERT INTO user (name, email, password, image, status, date)' +
+                'VALUES (?,?,?,?,?,NOW())';
+            sql = mysql.format(sql, [data.name, data.email, haspass,img, data.status]);
 
             pool.query(sql, function (error, results, fields) {
                 if (error) throw error;
