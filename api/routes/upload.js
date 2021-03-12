@@ -12,7 +12,17 @@ const storage = multer.diskStorage({
         cb(null, new Date().toISOString().replace(/:|./g,'')+ file.originalname);
     }
 })
-const upload = multer({ storage: storage })
+
+const fileFilter = (req, file, cb)=>{
+    if(file.mimetype === 'image/png'||file.mimetype === 'image/jpg'){
+        cb(null,true)
+    }else{
+        cb(null,false)
+    }
+}
+
+const upload = multer({ storage: storage , fileFilter: fileFilter})
+
 
 router.post('/profile', upload.single('avatar'), function (req, res, next) {
     let id = req.body.id;
