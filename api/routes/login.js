@@ -56,18 +56,27 @@ router.post('/loginUser', (req, res) => {
     sql = mysql.format(sql, [data.email]);
     pool.query(sql,  async function (error, results, fields) {
         if (error) throw error;
-        const validpass = await bcrypt.compare(data.password,results[0].password);
-        if(validpass){
-            const token = jwt.sign(
-                {
-                    id: results[0].id
-                },
-                "secret",
-            );
-            return res.status(201).json(token);
-        }else {
+
+        if (results[0] != null) {
+
+            const validpass = await bcrypt.compare(data.password,results[0].password);
+            if(validpass){
+                const token = jwt.sign(
+                    {
+                        id: results[0].id
+                    },
+                    "secret",
+                );
+                return res.status(201).json(token);
+            }else {
+                res.status(400).json({
+                    message: "อีเมลหรือรหัสผ่านผิด2",
+                });
+            }
+            
+        } else {
             res.status(400).json({
-                message: "login Failed",
+                message: "อีเมลหรือรหัสผ่านผิด1",
             });
         }
     });
