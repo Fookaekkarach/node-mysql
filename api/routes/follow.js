@@ -60,5 +60,28 @@ router.post('/checkfollow', (req, res) => {
     });
 });
 
+//เช็คจำนวนที่เราติดตาม SELECT COUNT(`IDfollowing`) as countmyfollow FROM `follow` WHERE `IDmy`=13
+router.post('/countmyfollow', (req, res) => {
+    let data = req.body;
+    let sql = 'SELECT COUNT(`IDfollowing`) as countmyfollow FROM `follow` WHERE `IDmy`= ?';
+    sql = mysql.format(sql, [data.IDmy]);
+
+    pool.query(sql,function (error, results, fields) {
+        if (error) throw error;
+        res.status(201).json(results[0].countmyfollow);
+    });
+});
+
+//เช็คจำนวนคนที่มาติดตามเรา SELECT COUNT(*) countmyfollow FROM `follow` WHERE `IDfollowing`=13
+router.post('/countfollowing', (req, res) => {
+    let data = req.body;
+    let sql = 'SELECT COUNT(*) as countfollowing FROM `follow` WHERE `IDfollowing`= ?';
+    sql = mysql.format(sql, [data.IDmy]);
+
+    pool.query(sql,function (error, results, fields) {
+        if (error) throw error;
+        res.status(201).json(results[0].countfollowing);
+    });
+});
 
 module.exports = router;
