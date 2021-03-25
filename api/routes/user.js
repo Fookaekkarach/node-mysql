@@ -39,8 +39,8 @@ router.delete('/:userid', (req, res) => {
     });
 });
 
-router.put('/:userid', (req, res) => {
-    let id = req.params.userid;
+router.post('/edituser', (req, res) => {
+    let id = req.body.id;
     let data = req.body;
 
     //Old data
