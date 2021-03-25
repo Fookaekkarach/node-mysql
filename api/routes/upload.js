@@ -22,8 +22,6 @@ const fileFilter = (req, file, cb)=>{
 }
 
 const upload = multer({ storage: storage , fileFilter: fileFilter})
-//const upload = multer({ storage: storage})
-
 
 router.post('/profile', upload.single('avatar'), function (req, res, next) {
     let id = req.body.id;
